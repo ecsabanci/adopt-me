@@ -364,3 +364,18 @@ form .pet {
 .mini .loader {
   font-size: 34px;
 }
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  width: 55%;
+  margin-bottom: 20px;
+}
+
+.pagination button {
+  margin: 0;
+}
+
+.hide {
+  visibility: hidden;
+}
