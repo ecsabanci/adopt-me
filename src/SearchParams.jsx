@@ -16,21 +16,11 @@ const SearchParams = () => {
 
   const [animal, setAnimal] = useState('')
   const [breeds] = useBreedList(animal)
-  const [pagination, setPagination] = useState(0)
 
   const [adoptedPet] = useContext(AdoptedPetContext)
 
   const results = useQuery(['search', requestParams], fetchSearch)
   const pets = results?.data?.pets ?? []
-
-  const hasNext = results?.data?.hasNext
-
-  const handlePagination = (increment) => {
-    setRequestParams((prevParams) => ({
-      ...prevParams,
-      page: prevParams.page + increment,
-    }))
-  }
 
   return (
     <div className="search-params">
@@ -87,14 +77,6 @@ const SearchParams = () => {
         </label>
         <button>Submit</button>
       </form>
-      <div className="pagination">
-        <button className={requestParams.page === 0 && 'hide'} onClick={() => handlePagination(-1)}>
-          Prev
-        </button>
-        <button className={!hasNext && 'hide'} onClick={() => handlePagination(1)}>
-          Next
-        </button>
-      </div>
       <Results pets={pets} />
     </div>
   )
