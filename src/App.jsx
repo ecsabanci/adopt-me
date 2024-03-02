@@ -1,10 +1,12 @@
 import { createRoot } from "react-dom/client";
 import { Link, BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import SearchParams from "./SearchParams";
-import Details from "./Details";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import AdoptedPetContext from "./AdoptedPetContext";
+
+// this will not load until the routes actually loaded
+const Details = lazy(() => import("./Details"));
+const SearchParams = lazy(() => import("./SearchParams"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,17 +28,30 @@ const App = () => {
     >
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <AdoptedPetContext.Provider value={adoptedPetHook}>
-            <header className="mb-10 w-full bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 p-7 text-center">
-              <Link className="text-6xl text-white hover:text-gray-200" to="/">
-                Adopt Me!
-              </Link>
-            </header>
-            <Routes>
-              <Route path="/details/:id" element={<Details />}></Route>
-              <Route path="/" element={<SearchParams />}></Route>
-            </Routes>
-          </AdoptedPetContext.Provider>
+          {/* but what happens when we hit something to load */}
+          {/* show the fallback until suspense has returns */}
+          <Suspense
+            fallback={
+              <div className="loading-pane">
+                <h2 className="loader">App is loading... just a sec!</h2>
+              </div>
+            }
+          >
+            <AdoptedPetContext.Provider value={adoptedPetHook}>
+              <header className="mb-10 w-full bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 p-7 text-center">
+                <Link
+                  className="text-6xl text-white hover:text-gray-200"
+                  to="/"
+                >
+                  Adopt Me!
+                </Link>
+              </header>
+              <Routes>
+                <Route path="/details/:id" element={<Details />}></Route>
+                <Route path="/" element={<SearchParams />}></Route>
+              </Routes>
+            </AdoptedPetContext.Provider>
+          </Suspense>
         </QueryClientProvider>
       </BrowserRouter>
     </div>
