@@ -1,6 +1,10 @@
-import { Component } from 'react'
+import { Component, MouseEvent } from 'react'
 
-class Carousel extends Component {
+interface IProps {
+  images: string[];
+}
+
+class Carousel extends Component<IProps> {
   state = {
     active: 0,
   }
@@ -10,15 +14,15 @@ class Carousel extends Component {
     images: ['http://pets-images.dev-apis.com/pets/non.jpg'],
   }
 
-  // will be run once everytime the component rendered on the DOM
+  // will be run once every time the component rendered on the DOM
   componentDidMount() {}
 
   // every single time when state updated
   componentDidUpdate(){}
 
-  handleIndexClick = (e) => {
+  handleIndexClick = (index: number) => {
     this.setState({
-      active: +e.target.dataset.index // dataset means all data-* attributes in img tag
+      active: index
     })
   }
 
@@ -31,14 +35,17 @@ class Carousel extends Component {
         <img src={images[active]} alt="animal hero" />
         <div className="carousel-smaller">
           {images.map((photo, index) => (
-            <img
-              onClick={this.handleIndexClick}
-              data-index={index}
-              src={photo}
+            <button
+              onClick={() => this.handleIndexClick(index)}
               key={photo}
               className={index === active ? 'active' : ''}
-              alt="animal thumbnail"
-            />
+              aria-label={`Thumbnail ${index + 1}`}
+            >
+              <img
+                src={photo}
+                alt={`animal thumbnail ${index}`}
+              />
+            </button>
           ))}
         </div>
       </div>

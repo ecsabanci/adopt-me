@@ -6,16 +6,23 @@ import fetchPet from './fetchPet'
 import Carousel from './Carousel'
 import ErrorBoundary from './ErrorBoundary'
 import Modal from './Modal'
+import { PetAPIResponse } from './APIResponsesTypes'
 
 const Details = () => {
+  const { id } = useParams()
+  // ["details", id] will be passed as the queryKey to fetchPet
+
+  if(!id) {
+    throw new Error("why did you not give me an id. I wanted an id. I have no id.");
+  }
+
   const [showModal, setShowModal] = useState(false)
 
   const navigate = useNavigate()
-  const [_, setAdoptedPet] = useContext(AdoptedPetContext)
 
-  const { id } = useParams()
-  // ["details", id] will be passed as the queryKey to fetchPet
   const results = useQuery(['details', id], fetchPet)
+
+  const [_, setAdoptedPet] = useContext(AdoptedPetContext)
 
   // isLoading is for the first loading
   if (results.isLoading) {
@@ -26,7 +33,10 @@ const Details = () => {
     )
   }
 
-  const pet = results.data.pets[0]
+  const pet = results?.data?.pets[0]
+  if(!pet) {
+    throw new Error("no pet lol");
+  }
 
   return (
     <div className="details">
@@ -62,10 +72,10 @@ const Details = () => {
   )
 }
 
-function DetailsErrorBoundary(props) {
+function DetailsErrorBoundary() {
   return (
     <ErrorBoundary>
-      <Details {...props} />
+      <Details />
     </ErrorBoundary>
   )
 }
